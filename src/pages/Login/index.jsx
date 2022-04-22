@@ -2,47 +2,9 @@ import { useContext, useRef, useState } from "react";
 import { userContext } from "../../components/UserProvider";
 import { Form, Input, Button, Row, Col, message } from "antd";
 import { UserOutlined, MessageOutlined } from "@ant-design/icons/lib/icons";
-import http from "../../http/axios";
+import { getVerificationCode } from "../../api/verificationCode";
+import { login } from "../../api/user";
 import "./index.less";
-
-// 根据手机号请求发送短信验证码
-function getVerificationCode(username, onSuccess, onFailed) {
-  const formBody = new FormData();
-  formBody.append("username", username);
-  http.post("/verificationCode", formBody)
-  .then(response => {
-    const data = response.data;
-    if (data.code === 200) {
-      onSuccess();
-    } else {
-      onFailed(data.message);
-    }
-  })
-  .catch(reason => {
-    console.log(reason);
-    onFailed("获取短信验证码失败！");
-  });
-}
-
-// 根据手机号与短信验证码登陆
-function login(username, verificationCode, onSuccess, onFailed) {
-  const formBody = new FormData();
-  formBody.append("username", username);
-  formBody.append("verificationCode", verificationCode);
-  http.post("/loginWithVC", formBody)
-  .then(response => {
-    const data = response.data;
-    if (data.code === 200) {
-      onSuccess(data.data);
-    } else {
-      onFailed(data.message);
-    }
-  })
-  .catch(reason => {
-    console.log(reason);
-    onFailed("登陆失败！");
-  });
-}
 
 function Login() {
   // state
@@ -76,7 +38,7 @@ function Login() {
   };
   const onGetVerificationCode = () => {
     setVerificationCodeLoading(true);
-    const username = usernameRef.current.state.value;
+    const username = usernameRef.current.input.value;
     getVerificationCode(
       username,
       () => {
@@ -102,9 +64,17 @@ function Login() {
   }
 
   return (
-    <Row>
-      <Col span={8} offset={8}>
-        <Form onFinish={onLogin}>
+    <Row
+      align="middle"
+      className="login-root"
+    >
+      <Col
+        span={6}
+        offset={9}
+      >
+        <Form
+          onFinish={onLogin}
+        >
           <Form.Item
             name="username"
             rules={[{
@@ -118,6 +88,7 @@ function Login() {
               placeholder="手机号"
               maxLength={11}
               ref={usernameRef}
+              size="large"
             />
           </Form.Item>
           <Row gutter={8}>
@@ -139,6 +110,7 @@ function Login() {
                   prefix={<MessageOutlined className="form-item-icon" />}
                   placeholder="验证码"
                   maxLength={6}
+                  size="large"
                 />
               </Form.Item>
             </Col>
@@ -148,6 +120,7 @@ function Login() {
                 onClick={onGetVerificationCode}
                 loading={verificationCodeLoading}
                 disabled={timer !== 0}
+                size="large"
               >
                 {startTimer()}
               </Button>

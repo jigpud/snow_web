@@ -8,6 +8,7 @@ function EditUser({ visible, onCancel, onSuccess, user }) {
   // state
   const [userForEdit, setUserForEdit] = useState(user);
   const [update, setUpdate] = useState(false);
+
   useEffect(() => {
     setUserForEdit(user);
   }, [user]);
@@ -16,20 +17,23 @@ function EditUser({ visible, onCancel, onSuccess, user }) {
   const formRef = useRef();
 
   // callback
+  const reset = () => {
+    formRef.current.resetFields();
+  }
   const onUpdate = userInfomation => {
-    const modifiedUserInfomation = { ...userForEdit };
+    const modifiedUserInfomation = {};
+    modifiedUserInfomation.userid = userForEdit.userid;
     modifiedUserInfomation.password = userInfomation["edit-password"];
     modifiedUserInfomation.age = userInfomation["edit-age"];
     modifiedUserInfomation.gender = userInfomation["edit-gender"];
     modifiedUserInfomation.nickname = userInfomation["edit-nickname"];
     modifiedUserInfomation.signature = userInfomation["edit-signature"];
-    modifiedUserInfomation.likes = userInfomation["edit-likes"];
-    console.log(modifiedUserInfomation);
+    modifiedUserInfomation.avatar = userInfomation["edit-avatar"];
     setUpdate(true);
     updateUser(modifiedUserInfomation, () => {
       setUpdate(false);
-      message.success("更新成功！");
-      formRef.current.resetFields();
+      message.success("更新用户信息成功！");
+      reset();
       onSuccess();
     }, reason => {
       setUpdate(false);
@@ -37,7 +41,7 @@ function EditUser({ visible, onCancel, onSuccess, user }) {
     });
   };
   const onCancelEdit = () => {
-    formRef.current.resetFields();
+    reset();
     onCancel();
   }
 
@@ -48,8 +52,7 @@ function EditUser({ visible, onCancel, onSuccess, user }) {
       closable={false}
       visible={visible}
       centered
-      destroyOnClose
-      key={userForEdit.username}
+      key={userForEdit.userid}
     >
       <Form
         onFinish={onUpdate}
@@ -67,10 +70,10 @@ function EditUser({ visible, onCancel, onSuccess, user }) {
         <Form.Item
           label="密码"
           name="edit-password"
-          initialValue=""
         >
           <Input.Password
             placeholder="设置以更新密码"
+            defaultValue={setUserForEdit.password}
           />
         </Form.Item>
         <Form.Item
@@ -102,9 +105,9 @@ function EditUser({ visible, onCancel, onSuccess, user }) {
           <Input />
         </Form.Item>
         <Form.Item
-          label="获赞"
-          name="edit-likes"
-          initialValue={userForEdit.likes}
+          label="头像"
+          name="edit-avatar"
+          initialValue={userForEdit.avatar}
         >
           <Input />
         </Form.Item>

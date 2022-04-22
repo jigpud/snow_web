@@ -66,13 +66,7 @@ function renderTableColumns(onEditUser, onDeleteUser) {
       dataIndex: "signature",
     },
     {
-      title: "获赞",
-      key: "likes",
-      dataIndex: "likes",
-    },
-    {
       title: "操作",
-      key: "opration",
       render: user => (
         <Space
           size="middle"
@@ -120,7 +114,7 @@ function UserManagement() {
   // state
   const [userList, setUserList] = useState([]);
   const [pageSize, setPageSize] = useState(10);
-  const [totalPage, setTotalPage] = useState(5);
+  const [totalPage, setTotalPage] = useState(1);
   const [currentPage, setCurrentPage]= useState(1);
   const [condition, setCondition] = useState("");
   const [refresh, setRefresh] = useState(true);
@@ -139,23 +133,23 @@ function UserManagement() {
       } else if (queryType === "nickname") {
         nickname = condition;
       }
-      queryUser(username, nickname, pageSize, currentPage, (users, current, pages) => {
+      queryUser(username, nickname, pageSize, currentPage, (users, current, total) => {
         if (users.length > 0 || currentPage === 1) {
           setRefresh(false);
           setUserList(users);
           setCurrentPage(current);
-          setTotalPage(pages);
+          setTotalPage(total);
           setShowPagination(users.length > 0);
         } else {
-          setCurrentPage(currentPage => currentPage - 1);
-          setTotalPage(totalPage => totalPage - 1);
+          setCurrentPage(currentPage - 1);
+          setTotalPage(totalPage - 1);
         }
       }, reason => {
         setRefresh(false);
         message.error(reason);
       });
     }
-  }, [refresh, condition, queryType, currentPage, pageSize]);
+  }, [refresh, condition, queryType, currentPage, pageSize, totalPage]);
 
   // callback
   const onPageSizeChange = (page, newPageSize) => {
@@ -175,8 +169,8 @@ function UserManagement() {
     setCondition("");
     setRefresh(true);
   };
-  const onSearchUser = condition => {
-    setCondition(condition);
+  const onSearchUser = c => {
+    setCondition(c);
     setCurrentPage(1);
     setPageSize(10);
     setRefresh(true);
@@ -189,7 +183,7 @@ function UserManagement() {
     setRefresh(true);
     deleteUser(user.userid, () => {
       setRefresh(false);
-      message.success("删除成功！");
+      message.success("删除用户成功！");
     }, reason => {
       setRefresh(false);
       message.error(reason);
@@ -247,6 +241,7 @@ function UserManagement() {
         bordered
         loading={refresh}
         pagination={false}
+        rowKey={user => user.userid}
       />
       <EditUser
         visible={showEditUser}

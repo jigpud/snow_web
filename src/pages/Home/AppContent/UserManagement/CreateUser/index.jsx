@@ -12,11 +12,13 @@ function CreateUser({ visible, onCancel, onSuccess }) {
   const formRef = useRef();
 
   // callback
-  const onCreateUser = ({ username, password }) => {
+  const onCreateUser = userInformation => {
     setCreate(true);
+    const username = userInformation["create-username"];
+    const password = userInformation["create-password"];
     createUser(username, password, () => {
       setCreate(false);
-      message.success("创建成功！");
+      message.success("创建用户成功！");
       formRef.current.resetFields();
       onSuccess();
     }, reason => {
@@ -42,7 +44,7 @@ function CreateUser({ visible, onCancel, onSuccess }) {
       >
         <Form.Item
           label="手机号"
-          name="username"
+          name="create-username"
           rules={[{
             required: true,
             message: "请输入正确的手机号！",
@@ -54,7 +56,7 @@ function CreateUser({ visible, onCancel, onSuccess }) {
         </Form.Item>
         <Form.Item
           label="密码"
-          name="password"
+          name="create-password"
           rules={[
             {
               required: true,
