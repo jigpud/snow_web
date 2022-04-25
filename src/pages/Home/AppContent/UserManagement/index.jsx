@@ -231,7 +231,7 @@ function UserManagement() {
         <CreateUser
           visible={showCreateUser}
           onCancel={() => setShowCreateUser(false)}
-          onCreateSuccess={() => setShowCreateUser(false)}
+          onSuccess={() => setShowCreateUser(false)}
         />
       </Input.Group>
       <Table
