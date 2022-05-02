@@ -1,6 +1,6 @@
 import { Layout, Menu, Avatar } from "antd";
 import { NavLink } from "react-router-dom";
-import { UserOutlined, AppstoreOutlined, CameraOutlined } from "@ant-design/icons/lib/icons";
+import { UserOutlined, AppstoreOutlined, CameraOutlined, SmileOutlined } from "@ant-design/icons/lib/icons";
 import { userContext } from "../../../components/UserProvider";
 import { useContext, useState } from "react";
 import "./index.less";
@@ -29,25 +29,76 @@ function SiderMenu() {
   }
 
   return (
-    <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-      <div className="logo"/>
+    <Sider
+      collapsible
+      collapsed={collapsed}
+      onCollapse={onCollapse}
+    >
+      <div
+        className="logo"
+      />
       <Menu
         theme="dark"
         mode="inline"
         defaultSelectedKeys={["user_management_users"]}
         defaultOpenKeys={["user_management"]}
-        onSelect={onMenuItemSelet}>
-        <Menu.SubMenu key="user_management" title="用户管理" icon={<UserOutlined/>}>
-          <Menu.Item key="user_management_users" icon={<AppstoreOutlined/>}>
-            <NavLink to="/user">用户列表</NavLink>
+        onSelect={onMenuItemSelet}
+      >
+        <Menu.SubMenu
+          key="user_management"
+          title="用户管理"
+          icon={<UserOutlined />}
+        >
+          <Menu.Item
+            key="user_management_users"
+            icon={<AppstoreOutlined />}
+          >
+            <NavLink
+              to="/user"
+            >
+              用户列表
+            </NavLink>
           </Menu.Item>
         </Menu.SubMenu>
-        <Menu.SubMenu key="attraction_management" title="景点管理" icon={<CameraOutlined/>}>
-          <Menu.Item key="attraction_management_users" icon={<AppstoreOutlined/>}>
-            <NavLink to="/attraction">景点列表</NavLink>
+        <Menu.SubMenu
+          key="attraction_management"
+          title="景点管理"
+          icon={<CameraOutlined />}
+        >
+          <Menu.Item
+            key="attraction_management_users"
+            icon={<AppstoreOutlined />}
+          >
+            <NavLink
+              to="/attraction"
+            >
+              景点列表
+            </NavLink>
           </Menu.Item>
         </Menu.SubMenu>
-        <Menu.Item key="logout" icon={<Avatar className="avatar"/>}>
+        <Menu.SubMenu
+          key="food_management"
+          title="美食管理"
+          icon={<SmileOutlined />}
+        >
+          <Menu.Item
+            key="food_management_foods"
+            icon={<AppstoreOutlined />}
+          >
+            <NavLink
+              to="/food"
+            >
+              美食列表
+            </NavLink>
+          </Menu.Item>
+        </Menu.SubMenu>
+        <Menu.Item
+          key="logout"
+          icon={
+            <Avatar
+              className="avatar"
+            />
+          }>
           退出登陆
         </Menu.Item>
       </Menu>

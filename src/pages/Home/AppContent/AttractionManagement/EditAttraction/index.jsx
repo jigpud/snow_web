@@ -1,8 +1,8 @@
 import { CloseOutlined, SaveOutlined, PlusOutlined } from "@ant-design/icons";
-import { Form, Modal, Row, Col, Button, message, Input, Space, Tag, Upload } from "antd";
-import ImgCrop from "antd-img-crop";
+import { Form, Modal, Row, Col, Button, message, Input, Space, Tag, Upload, Select } from "antd";
 import { useState, useRef, useEffect } from "react";
 import { updateAttraction } from "../../../../../api/attraction";
+import { queryFood } from "../../../../../api/food";
 import { getAttractionImgUploadToken, uploadImg } from "../../../../../api/qiniu";
 import "./index.less";
 
@@ -13,19 +13,35 @@ export function EditAttraction({ visible, onCancel, onSuccess, attraction }) {
   const [fileList, setFileList] = useState([]);
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState(false);
+  const [attractionFoods, setAttractionFoods] = useState([]);
+  const [foods, setFoods] = useState([]);
+  const [searchFood, setSearchFood] = useState(true);
 
   useEffect(() => {
     setAttractionForEdit(attraction);
-    if (attraction.photos) {
-      setFileList(attraction.photos.map(photo => ({
-        url: photo,
+    if (attraction.pictures) {
+      setFileList(attraction.pictures.map(picture => ({
+        url: picture,
         status: "done",
-        uid: photo
+        uid: picture
       })));
     }
     if (attraction.tags) {
       setTags([...attraction.tags]);
     }
+    if (attraction.foods) {
+      setAttractionFoods(attraction.foods.map(food => food.foodId));
+    }
+    queryFood("", Number.MAX_SAFE_INTEGER, 1, (records) => {
+      setSearchFood(false);
+      setFoods(records.map(food => ({
+        id: food.foodId,
+        name: food.name,
+      })));
+    }, reason => {
+      setSearchFood(false);
+      message.error(reason);
+    });
   }, [attraction]);
 
   // ref
@@ -35,7 +51,7 @@ export function EditAttraction({ visible, onCancel, onSuccess, attraction }) {
   // callback
   const reset = () => {
     formRef.current.resetFields();
-  }
+  };
   const onUpdate = attractionInformation => {
     const modifiedAttraction = {};
     modifiedAttraction.attractionId = attractionForEdit.attractionId;
@@ -43,7 +59,8 @@ export function EditAttraction({ visible, onCancel, onSuccess, attraction }) {
     modifiedAttraction.description = attractionInformation["edit-description"];
     modifiedAttraction.location = attractionInformation["edit-location"];
     modifiedAttraction.tags = tags;
-    modifiedAttraction.photos = fileList.map(file => file.url);
+    modifiedAttraction.pictures = fileList.map(file => file.url);
+    modifiedAttraction.foods = attractionFoods
     setUpdate(true);
     updateAttraction(modifiedAttraction, () => {
       setUpdate(false);
@@ -54,11 +71,11 @@ export function EditAttraction({ visible, onCancel, onSuccess, attraction }) {
       setUpdate(false);
       message.error(reason);
     });
-  }
+  };
   const onCancelEdit = () => {
     reset();
     onCancel();
-  }
+  };
   const onNewTagConfirm = () => {
     const newInputTag = tagInputRef.current.input.value;
     if (newInputTag && tags.indexOf(newInputTag) === -1) {
@@ -66,15 +83,15 @@ export function EditAttraction({ visible, onCancel, onSuccess, attraction }) {
       setTags(tags);
     }
     setNewTag(false);
-  }
+  };
   const onTagClose = closedTag => {
     const newTags = tags.filter(tag => tag !== closedTag);
     setTags(newTags);
-  }
-  const onPhotoListChange = ({ fileList }) => {
+  };
+  const onPictureListChange = ({ fileList }) => {
     setFileList(fileList);
-  }
-  const onUploadPhoto = ({ file, onProgress, onError, onSuccess }) => {
+  };
+  const onUploadPicture = ({ file, onProgress, onError, onSuccess }) => {
     getAttractionImgUploadToken(({ uploadToken, key }) => {
       uploadImg(file, key, uploadToken, url => {
         file["url"] = url;
@@ -90,7 +107,11 @@ export function EditAttraction({ visible, onCancel, onSuccess, attraction }) {
       onError();
       message.error(reason);
     });
-  }
+  };
+  const onAttractionFoodsChange = newAttractionFoods => {
+    setAttractionFoods(newAttractionFoods);
+  };
+  const onFilterFood = (inputValue, option) => option.children.indexOf(inputValue) !== -1;
 
   return (
     <Modal
@@ -179,17 +200,37 @@ export function EditAttraction({ visible, onCancel, onSuccess, attraction }) {
         </Form.Item>
         <Form.Item
           label="景点照片"
-          name="edit-photos"
+          name="edit-pictures"
         >
           <Upload
             listType="picture-card"
             fileList={fileList}
             accept="img"
-            customRequest={onUploadPhoto}
-            onChange={onPhotoListChange}
+            customRequest={onUploadPicture}
+            onChange={onPictureListChange}
           >
             <PlusOutlined/> 上传
           </Upload>
+        </Form.Item>
+        <Form.Item
+          label="相关美食"
+        >
+          <Select
+            loading={searchFood}
+            placeholder="添加相关美食"
+            mode="multiple"
+            onChange={onAttractionFoodsChange}
+            value={attractionFoods}
+            filterOption={onFilterFood}
+          >
+            {foods.map(food => (
+              <Select.Option
+                key={food.id}
+              >
+                {food.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Row
           justify="space-between"

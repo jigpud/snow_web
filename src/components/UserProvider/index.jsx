@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export const userContext = createContext();
 
 function UserProvider({ children }) {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     if (isLogin) {
