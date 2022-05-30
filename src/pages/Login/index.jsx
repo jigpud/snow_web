@@ -133,7 +133,7 @@ function Login() {
                 htmlType="submit"
                 loading={loginLoading}
               >
-                登陆
+                登录
               </Button>
             </Col> 
           </Row>

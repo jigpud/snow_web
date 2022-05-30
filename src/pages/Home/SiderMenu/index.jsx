@@ -99,7 +99,7 @@ function SiderMenu() {
               className="avatar"
             />
           }>
-          退出登陆
+          退出登录
         </Menu.Item>
       </Menu>
     </Sider>

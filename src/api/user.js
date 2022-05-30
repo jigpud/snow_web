@@ -1,6 +1,6 @@
 import http from "../http/axios";
 
-// admin登陆
+// admin登录
 export function login(username, verificationCode, onSuccess, onFailed) {
   const formBody = new FormData();
   formBody.append("username", username);
@@ -16,7 +16,7 @@ export function login(username, verificationCode, onSuccess, onFailed) {
   })
   .catch(reason => {
     console.log(reason);
-    onFailed("登陆失败！");
+    onFailed("登录失败！");
   });
 }
 
