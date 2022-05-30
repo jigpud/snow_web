@@ -52,7 +52,7 @@ function EditUser({ visible, onCancel, onSuccess, user }) {
       closable={false}
       visible={visible}
       centered
-      key={userForEdit.userid}
+      key={JSON.stringify(userForEdit)}
     >
       <Form
         onFinish={onUpdate}

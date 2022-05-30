@@ -78,7 +78,7 @@ function EditFood({ visible, onCancel, onSuccess, food }) {
       closable={false}
       visible={visible}
       centered
-      key={foodForEdit.foodId}
+      key={JSON.stringify(foodForEdit)}
     >
       <Form
         onFinish={onUpdate}

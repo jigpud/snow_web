@@ -120,7 +120,7 @@ export function EditAttraction({ visible, onCancel, onSuccess, attraction }) {
       closable={false}
       visible={visible}
       centered
-      key={attractionForEdit.attractionId}
+      key={JSON.stringify(attractionForEdit)}
     >
       <Form
         onFinish={onUpdate}
